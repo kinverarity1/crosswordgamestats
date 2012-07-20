@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <title>$window_title</title>
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+        $javascript_headers
+    </head>
+    <body>
+        <h1>$page_title</h1>
+        <div class="content">
+            $content
+            <p>Ganoga Lake is a natural lake in Colley Township in southeast Sullivan County in Pennsylvania, United States. The Ricketts family purchased the lake in the early 1850s, and built a stone house on the lake shore by 1852 or 1855; this served as a hunting lodge and tavern. R. Bruce Ricketts added the lake to his extensive holdings after the American Civil War, and in 1873 built a large wooden addition north of the stone house, which became the North Mountain House hotel. The hotel had one of the first summer schools in the United States in 1876 and 1877. After the death of R. Bruce Ricketts in 1918, his heirs sold much of his 80,000 acres (32,000 ha) to the state for Pennsylvania State Game Lands and Ricketts Glen State Park. The state tried to purchase the lake in 1957, but was outbid by investors who turned the land around it into a private housing development; as such it is "off limits" to the public. Ganoga Lake is on the Allegheny Plateau, just north of the Allegheny Front, in sedimentary rocks from the Pocono Formation. The Wisconsin Glaciation some 20,000 years ago changed the drainage patterns of the lake; this diverted its waters to Kitchen Creek and carved the 24 named waterfalls in Ricketts Glen State Park in the process. </p>
+        </div>
+    </body>
+</html>
