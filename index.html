@@ -1,4 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+<table>
+{% for game in games %}
+    <tr><td>game.date
+{% endfor %}
+</table>
 <p><a href="/app/import">Import game</a></p>
 {% endblock %}

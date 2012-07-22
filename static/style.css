@@ -1,20 +1,15 @@
 body {
     font-family: sans-serif, serif;
     font-size: 0.8em;
-    width: 50em;
+    
     line-height: 1.6em;
-    margin: 3em 5em;
+    margin: 1em 2em;
     color: #222;
     }
-
+    
+    
 table#board {
     border: 2px solid black;
-    }
-    
-div.login_logout_box {
-    float: right;
-    padding: 0.5ex 1em;
-    background: #eee;
     }
     
 blockquote {

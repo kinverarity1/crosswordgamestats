@@ -5,9 +5,7 @@
     </head>
     <body>
         {% block user_box %}
-        <div class="login_logout_box">
-        {{ nickname }} ({{ email }}) <a href="{{ logout_url }}">Log out</a>
-        </div>
+        <p>{{ nickname }} ({{ email }}) &mdash; <a href="{{ logout_url }}">Log out</a></p>
         {% endblock %}
         
         <h1>{{ title }}</h1>
