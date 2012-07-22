@@ -42,30 +42,6 @@ class GAEGame(db.Model):
         return game.Game(jsontxt=self.json_serialisation)
     
     
-def get_html(*args, **kwargs):
-    """
-    Fill HTML by keywords.
-    
-    Args: 
-        - dictionaries updated in ordered of passing, so the last have
-          precedence.
-    
-    Kwargs:
-        - keyword arguments which are the last thing used in updating the
-          template.
-    
-    Returns:
-        - string of HTML
-    
-    """
-    fields = {"javascript_headers": "",
-              "content": ""}
-    for d in args:
-        fields.update(d)
-    fields.update(kwargs)
-    html = string.Template(open("html.template", mode="r").read())
-    return html.safe_substitute(**fields)
-    
 class RequestHandler(webapp2.RequestHandler):
     def finish_render(self, template_name, **kwargs):
         self.response.headers["Context-Type"] = "text/html"
@@ -80,16 +56,8 @@ class RequestHandler(webapp2.RequestHandler):
         template_values.update(kwargs)
         template = jinja_environment.get_template(template_name)
         self.response.out.write(template.render(template_values))
-    
-    
-class Home(RequestHandler):
-    """
-    Handler for the main page.
-    """
-    def get(self):
-        self.finish_render("index.html", title="Home")
 
-        
+
 class Login(RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -99,6 +67,15 @@ class Login(RequestHandler):
             self.finish_render(
                     "login.html", title="Login to Crossword Game Stats",
                     login_url=users.create_login_url("/app"))
+        
+    
+class Home(RequestHandler):
+    """
+    Handler for the main page.
+    """
+    def get(self):
+        self.finish_render("index.html", title="Home")
+
         
 class ShowGame(RequestHandler):
     """
