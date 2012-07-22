@@ -6,3 +6,19 @@ body {
     margin: 3em 5em;
     color: #222;
     }
+
+table#board {
+    border: 2px solid black;
+    }
+    
+div.login_logout_box {
+    float: right;
+    padding: 0.5ex 1em;
+    background: #eee;
+    }
+    
+blockquote {
+    color: #666;
+    padding-left: 1em;
+    border-left: 3px solid #eee;
+    }

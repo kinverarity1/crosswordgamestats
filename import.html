@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+     <form name="import" action="/app/import" method="post">
+     <p><select name="format">
+        <option value="gcg" selected="selected">GCG</option>
+        <option value="json">JSON</option>
+        <option value="nfshost">NFS host</option>
+     </select></p>
+     <p><textarea rows="12" cols="40"></textarea></p>
+     <p><input type="submit" value="Import" /></p>
+     </form>
+{% endblock %}

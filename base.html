@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>{{ title }} - Crossword Game Stats</title>
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+    </head>
+    <body>
+        {% block user_box %}
+        <div class="login_logout_box">
+        {{ nickname }} ({{ email }}) <a href="{{ logout_url }}">Log out</a>
+        </div>
+        {% endblock %}
+        
+        <h1>{{ title }}</h1>
+        
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block user_box %}
+{% endblock %}
+{% block content %}
+     <p>Hello! Crossword Game Stats is a web app designed to keep track of
+     your performance in crossword games like SCRABBLE (TM). In order to use
+     this site you will need to sign in with a Google account:</p>
+     
+     <p><a href="{{ login_url }}">Log in</a></p>
+     
+     <h2>Privacy</h2>
+     
+     <p>Note that the only information this program is able to access
+     through this process is your username and email address, and we absolutely
+     promise to never send spam or release your email address to anyone. In
+     fact, no emails will ever be sent without your explicit approval for each
+     individual email.</p>
+     
+     <p>For more details on this sign-in process, see the Google App Engine
+     <a href="https://developers.google.com/appengine/docs/\
+python/users/overview">reference documentation:</a>
+     
+        <blockquote>While a user is signed in to the application, the app can
+        access the user's email address (or OpenID identifier if your app is
+        using OpenID), as well as a unique user ID.</blockquote>
+        
+     <p>Note that Crossword Game Stats does not currently support OpenID.</p>
+{% endblock %}

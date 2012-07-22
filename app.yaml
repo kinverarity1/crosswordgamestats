@@ -1,4 +1,4 @@
-application: scrabble
+application: crosswordgamestats
 version: 1
 runtime: python27
 api_version: 1
@@ -11,5 +11,13 @@ handlers:
 - url: /static
   static_dir: static
   
+- url: /app*
+  script: handlers.app
+  login: required
+  
 - url: /.*
   script: handlers.app
+  
+libraries:
+- name: jinja2
+  version: latest

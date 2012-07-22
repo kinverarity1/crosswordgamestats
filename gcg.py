@@ -8,9 +8,6 @@ class Game(object):
     metadata = {}
     moves = []
     
-    def __init__(self, board="Scrabble"):
-        
-    
     def read_gcg(self, txt):
         """
         Parser for .GCG files.
