@@ -44,11 +44,12 @@ class Game(object):
                            "metadata": self._metadata,
                            "players": self._players})
     
-    def __init__(self, jsontxt=None, gcgtxt=None):
+    def __init__(self, jsontxt=None, gcgtxt=None,
+                 tile_bonuses=str(scrabble_board)):
         self._players = []
         self._moves = []
         self._metadata = {"players": {},
-                          "tile_bonuses": str(scrabble_board)}
+                          "tile_bonuses": tile_bonuses}
         if not jsontxt is None:
             self.read_json(jsontxt)
         elif not gcgtxt is None:
