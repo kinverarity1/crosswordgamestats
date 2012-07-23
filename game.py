@@ -37,10 +37,6 @@ class Game(object):
     """
     A game of Scrabble.
     """
-    _players = []
-    _moves = []
-    _metadata = {"players": {},
-                 "tile_bonuses": str(scrabble_board)}
     
     @property
     def json(self):
@@ -49,6 +45,10 @@ class Game(object):
                            "players": self._players})
     
     def __init__(self, jsontxt=None, gcgtxt=None):
+        self._players = []
+        self._moves = []
+        self._metadata = {"players": {},
+                          "tile_bonuses": str(scrabble_board)}
         if not jsontxt is None:
             self.read_json(jsontxt)
         elif not gcgtxt is None:
