@@ -1,8 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
-<table>
+<table class="data">
+    <tr class="thead">
+        <td>Date played</td>
+        <td>Players and scores</td>
+        <td>Margin</td>
+        <td>Winner</td>
+        <td>Total</td>
+        <td>Date modified</td>
+    </tr>
 {% for game in games %}
-    <tr><td>game.date_played
+    <tr>
+        <td>{{ game._j_date_played }}</td>
+        <td>{{ game._j_score_summary }}</td>
+        <td>{{ game.margin }}</td>
+        <td>{{ game.winning_player }}</td>
+        <td>{{ game.total_score }}</td>
+        <td>{{ game._j_date_modified }}</td>
+    </tr>
 {% endfor %}
 </table>
 <p><a href="/app/import">Import game</a></p>

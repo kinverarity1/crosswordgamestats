@@ -7,9 +7,21 @@ body {
     color: #222;
     }
     
+td {
+    font-size: 0.8em;
+    padding: 0.5ex 1ex;
+    }
     
-table#board {
+table.board {
     border: 2px solid black;
+    }
+    
+table.data {
+    background: #eee;
+    }
+    
+tr.thead td {
+    font-weight: bold;
     }
     
 blockquote {

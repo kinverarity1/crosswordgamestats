@@ -33,14 +33,29 @@ class GAEGame(db.Model):
     board_pic = blobstore.BlobReferenceProperty()
     game_finished = db.BooleanProperty()
     json_serialisation = db.TextProperty()
+    uploader_id = db.StringProperty()
+    player_ids = db.StringListProperty()
     
     @property
-    def _scores_string(self):
-        return " ".join([str(s) for s in self.scores])
+    def _j_scores(self):
+        return ", ".join([str(s) for s in self.scores])
         
     @property
-    def _players_string(self):
-        return " ".join([p for p in self.players])
+    def _j_players(self):
+        return ", ".join([p for p in self.players])
+    
+    @property
+    def _j_score_summary(self):
+        return ", ".join(["%s %d" % (player, score) for
+                          player, score in zip(self.players, self.scores)])
+    
+    @property
+    def _j_date_played(self):
+        return self.date_played.strftime("%Y-%m-%d %H:%M")
+    
+    @property
+    def _j_date_modified(self):
+        return self.date_modified.strftime("%Y-%m-%d %H:%M:%S")
     
     def set_game(self, g):
         """
@@ -99,7 +114,11 @@ class Home(RequestHandler):
     Handler for the main page.
     """
     def get(self):
-        self.finish_render("index.html", title="Home")
+        user = users.get_current_user()
+        q = GAEGame.all()
+        q.filter("uploader_id =", user.user_id())
+        games = q.run(batch_size=1000)
+        self.finish_render("index.html", title="Home", games=games)
 
         
 class ShowGame(RequestHandler):
@@ -130,7 +149,7 @@ class ImportGame(RequestHandler):
             g = game.Game(gcgtxt=text)
             
         # Add to datastore
-        gae_game = GAEGame()
+        gae_game = GAEGame(uploader_id=user.user_id())
         gae_game.set_game(g)
         gae_game.put()
         
