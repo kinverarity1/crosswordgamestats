@@ -108,7 +108,7 @@ class Game(object):
                 self._metadata["description"] = description
             if line.startswith(">"):
                 self._moves.append(parse_gcg_event(line))
-
+                
                 
 def parse_gcg_event(line):
     logging.debug("parsing: " + line)
@@ -204,7 +204,7 @@ def parse_gcg_event(line):
             "coords": coords,
             "coordinates": coordinates,
             "direction": direction,
-            "score": score,
+            "score": int(score),
             "move_type": move_type,
             "board_changed": board_changed}
 

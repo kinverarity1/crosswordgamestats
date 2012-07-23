@@ -2,6 +2,7 @@
 Crossword Game Stats Google App Engine handlers and models.
 """
 
+import datetime
 import os
 try:
     import cPickle as pickle
@@ -23,20 +24,44 @@ jinja_environment = jinja2.Environment(
 
 class GAEGame(db.Model):
     date_played = db.DateTimeProperty()
-    date_entered = db.DateTimeProperty()
+    date_modified = db.DateTimeProperty()
+    players = db.StringListProperty()
+    scores = db.ListProperty(int)
     total_score = db.IntegerProperty()
     margin = db.IntegerProperty()
-    players = db.StringListProperty()
     winning_player = db.StringProperty()
     board_pic = blobstore.BlobReferenceProperty()
     game_finished = db.BooleanProperty()
     json_serialisation = db.TextProperty()
     
+    @property
+    def _scores_string(self):
+        return " ".join([str(s) for s in self.scores])
+        
+    @property
+    def _players_string(self):
+        return " ".join([p for p in self.players])
+    
     def set_game(self, g):
         """
         Set up GAE object.
         """
-        self.json_serialisation = g.json
+        self.date_played = g._metadata.get("date_played", None)
+        self.date_modified = datetime.datetime.now()
+        self.players = list(g._players)
+        self.scores = [0 for player in self.players]
+        for move in g._moves:
+            player_index = self.players.index(move["player"])
+            self.scores[player_index] += move["score"]
+        self.total_score = sum(self.scores)
+        sorted_scores, sorted_players = zip(
+                *sorted(zip(self.scores, self.players), key=lambda x: x[0]))
+        self.margin = None
+        if len(sorted_scores) > 1:
+            self.margin = sorted_scores[-1] - sorted_scores[-2]
+        self.winning_player = sorted_players[-1]
+            
+        self.json_serialisation = str(g.json)
     
     def get_game(self):
         return game.Game(jsontxt=self.json_serialisation)
