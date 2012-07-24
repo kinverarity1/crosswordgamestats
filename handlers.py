@@ -3,6 +3,7 @@ Crossword Game Stats Google App Engine handlers and models.
 """
 
 import datetime
+import logging
 import os
 try:
     import cPickle as pickle
@@ -22,6 +23,12 @@ jinja_environment = jinja2.Environment(
         loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 
+class Bunch(dict):
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+        self = self.__dict__
+        
+        
 class GAEGame(db.Model):
     date_played = db.DateTimeProperty()
     date_modified = db.DateTimeProperty()
@@ -37,30 +44,32 @@ class GAEGame(db.Model):
     player_ids = db.StringListProperty()
     
     @property
-    def _j_scores(self):
+    def _t_scores(self):
         return ", ".join([str(s) for s in self.scores])
-        
+
     @property
-    def _j_players(self):
+    def _t_players(self): 
         return ", ".join([p for p in self.players])
     
     @property
-    def _j_score_summary(self):
+    def _t_score_summary(self):
         return ", ".join(["%s %d" % (player, score) for
                           player, score in zip(self.players, self.scores)])
-    
+                          
     @property
-    def _j_date_played(self):
+    def _t_date_played(self):
         return self.date_played.strftime("%Y-%m-%d %H:%M")
-    
+        
     @property
-    def _j_date_modified(self):
+    def _t_date_modified(self):
         return self.date_modified.strftime("%Y-%m-%d %H:%M:%S")
+
+    @property
+    def _t_key(self):
+        return self.key()
     
     def set_game(self, g):
-        """
-        Set up GAE object.
-        """
+        """Set up GAE object."""
         self.date_played = g._metadata.get("date_played", None)
         self.date_modified = datetime.datetime.now()
         self.players = list(g._players)
@@ -75,7 +84,7 @@ class GAEGame(db.Model):
         if len(sorted_scores) > 1:
             self.margin = sorted_scores[-1] - sorted_scores[-2]
         self.winning_player = sorted_players[-1]
-            
+        
         self.json_serialisation = str(g.json)
     
     def get_game(self):
@@ -127,8 +136,17 @@ class ShowGame(RequestHandler):
     """
     def get(self):
         key = self.request.get("key")
-        g = GAEGame(key).get_game()
-        self.finish_render("index.html", title="Show game")
+        gae_game = db.get(key)
+        if gae_game is None:
+            self.redirect("/app")
+        else:
+            g = gae_game.get_game()
+            boards = g.get_boards()
+            if boards:
+                final_board = boards[-1]
+                self.finish_render("game.html", title="Show game", board=game.get_html_table_board(final_board))
+            else:
+                self.finish_render("game_json.html", title="Show game", game_json=g.json)
 
 
 class ImportGame(RequestHandler):
@@ -142,11 +160,7 @@ class ImportGame(RequestHandler):
         format = self.request.get("format")
         text = self.request.get("text")
         
-        # Parse the game
-        if format == "json":
-            g = game.Game(jsontxt=text)
-        elif format == "gcg":
-            g = game.Game(gcgtxt=text)
+        g = game.Game(**{format + "txt": text})
             
         # Add to datastore
         gae_game = GAEGame(uploader_id=user.user_id())
@@ -155,13 +169,29 @@ class ImportGame(RequestHandler):
         
         self.redirect("/app")
 
+
+class RefreshAllGames(RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        q = GAEGame.all()
+        q.filter("uploader_id =", user.user_id())
+        games = q.run(batch_size=1000)
+        for gae_game in games:
+            g = gae_game.get_game()
+            key = gae_game.key()
+            gae_game.delete()
+            gae_game_new = GAEGame(key_name=str(key), uploader_id=user.user_id())
+            gae_game_new.set_game(g)
+            gae_game_new.put()
+        self.redirect("/")
         
         
 app = webapp2.WSGIApplication(
         [("/", Login),
          ("/app", Home),
          ("/app/game", ShowGame),
-         ("/app/import", ImportGame)
+         ("/app/import", ImportGame),
+         ("/app/refresh", RefreshAllGames)
          ], debug=True)
         
         

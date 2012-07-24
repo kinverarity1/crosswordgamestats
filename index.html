@@ -1,24 +1,55 @@
 {% extends "base.html" %}
+{% block head %}
+        <script type="text/javascript" language="javascript" src="/static/jquery.js"></script>
+		<script type="text/javascript" language="javascript" src="/static/jquery.dataTables.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				$('#data').dataTable();
+			} );
+		</script>
+        <link rel="stylesheet" type="text/css" href="/static/dataTables_demo.css">
+{% endblock %}
 {% block content %}
-<table class="data">
-    <tr class="thead">
-        <td>Date played</td>
-        <td>Players and scores</td>
-        <td>Margin</td>
-        <td>Winner</td>
-        <td>Total</td>
-        <td>Date modified</td>
-    </tr>
+<div id="container">
+    <table class="display" id="data">
+        <thead>
+            <tr>
+                <th>Date played</th>
+                <th>Players and scores</th>
+                <th>Margin</th>
+                <th>Winner</th>
+                <th>Total</th>
+                <th>Date modified</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for game in games %}
+            <tr>
+                <td><a href="/app/game?key={{ game._t_key }}">{{ game._t_date_played }}</a></td>
+                <td><a href="/app/game?key={{ game._t_key }}">{{ game._t_score_summary }}</a></td>
+                <td>{{ game.margin }}</td>
+                <td>{{ game.winning_player }}</td>
+                <td>{{ game.total_score }}</td>
+                <td><a href="/app/game?key={{ game._t_key }}">{{ game._t_date_modified }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Date played</th>
+                <th>Players and scores</th>
+                <th>Margin</th>
+                <th>Winner</th>
+                <th>Total</th>
+                <th>Date modified</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
 {% for game in games %}
-    <tr>
-        <td>{{ game._j_date_played }}</td>
-        <td>{{ game._j_score_summary }}</td>
-        <td>{{ game.margin }}</td>
-        <td>{{ game.winning_player }}</td>
-        <td>{{ game.total_score }}</td>
-        <td>{{ game._j_date_modified }}</td>
-    </tr>
+<li>{{ game.json }}</li>
 {% endfor %}
-</table>
+<div style="clear: both; margin-top: 2.5em;">
 <p><a href="/app/import">Import game</a></p>
+</div>
 {% endblock %}

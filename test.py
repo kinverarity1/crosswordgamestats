@@ -61,4 +61,15 @@ g2
 
 # <codecell>
 
+import datetime
+datetime.datetime.strptime("monkey", "%Y-%m-%d %H:%M:%S")
+
+# <codecell>
+
+s = "kent:: 5 17"
+print s[:s.find("::")]
+print s[s.find("::"):]
+
+# <codecell>
+
 
