@@ -6,6 +6,7 @@
         {% endblock %}
     </head>
     <body>
+        <pre>{{ debug }}</pre>
         {% block user_box %}
         <p>{{ nickname }} ({{ email }}) &mdash; <a href="{{ logout_url }}">Log out</a></p>
         {% endblock %}

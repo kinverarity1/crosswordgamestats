@@ -21,6 +21,7 @@
                 <th>Total</th>
                 <th>Date modified</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -32,7 +33,8 @@
                 <td>{{ game.winning_player }}</td>
                 <td>{{ game.total_score }}</td>
                 <td><a href="/app/game?key={{ game._t_key }}">{{ game._t_date_modified }}</a></td>
-                <td><a href="/app/movetotrash?key={{ game._t_key }}">Move to Trash</a></td>
+                <td><a href="/app/delete?key={{ game._t_key }}">Delete permanently</a></td>
+                <td><a href="/app/restore?key={{ game._t_key }}">Restore</a></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -45,6 +47,7 @@
                 <th>Total</th>
                 <th>Date modified</th>
                 <th></th>
+                <th></th>
             </tr>
         </tfoot>
     </table>
@@ -53,7 +56,6 @@
 <li>{{ game.json }}</li>
 {% endfor %}
 <div style="clear: both; margin-top: 2.5em;">
-<p><a href="/app/import">Import game</a></p>
-<p><a href="/app/trash">Show games in Trash</a></p>
+<p><a href="/app">Return to list of games</a></p>
 </div>
 {% endblock %}

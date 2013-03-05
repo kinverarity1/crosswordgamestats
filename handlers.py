@@ -1,6 +1,6 @@
-"""
+'''
 Crossword Game Stats Google App Engine handlers and models.
-"""
+'''
 
 import datetime
 import logging
@@ -10,6 +10,7 @@ try:
 except ImportError:
     import pickle
 import string
+import logging
 
 import jinja2
 from google.appengine.api import users
@@ -42,41 +43,42 @@ class GAEGame(db.Model):
     json_serialisation = db.TextProperty()
     uploader_id = db.StringProperty()
     player_ids = db.StringListProperty()
+    trashed = db.BooleanProperty()
     
     @property
     def _t_scores(self):
-        return ", ".join([str(s) for s in self.scores])
+        return ', '.join([str(s) for s in self.scores])
 
     @property
     def _t_players(self): 
-        return ", ".join([p for p in self.players])
+        return ', '.join([p for p in self.players])
     
     @property
     def _t_score_summary(self):
-        return ", ".join(["%s %d" % (player, score) for
+        return ', '.join(['%s %d' % (player, score) for
                           player, score in zip(self.players, self.scores)])
                           
     @property
     def _t_date_played(self):
-        return self.date_played.strftime("%Y-%m-%d %H:%M")
+        return self.date_played.strftime('%Y-%m-%d %H:%M')
         
     @property
     def _t_date_modified(self):
-        return self.date_modified.strftime("%Y-%m-%d %H:%M:%S")
+        return self.date_modified.strftime('%Y-%m-%d %H:%M:%S')
 
     @property
     def _t_key(self):
         return self.key()
     
     def set_game(self, g):
-        """Set up GAE object."""
-        self.date_played = g._metadata.get("date_played", None)
+        '''Set up GAE object.'''
+        self.date_played = g._metadata.get('date_played', None)
         self.date_modified = datetime.datetime.now()
         self.players = list(g._players)
         self.scores = [0 for player in self.players]
         for move in g._moves:
-            player_index = self.players.index(move["player"])
-            self.scores[player_index] += move["score"]
+            player_index = self.players.index(move['player'])
+            self.scores[player_index] += move['score']
         self.total_score = sum(self.scores)
         sorted_scores, sorted_players = zip(
                 *sorted(zip(self.scores, self.players), key=lambda x: x[0]))
@@ -84,6 +86,7 @@ class GAEGame(db.Model):
         if len(sorted_scores) > 1:
             self.margin = sorted_scores[-1] - sorted_scores[-2]
         self.winning_player = sorted_players[-1]
+        self.trashed = False
         
         self.json_serialisation = str(g.json)
     
@@ -92,15 +95,26 @@ class GAEGame(db.Model):
     
     
 class RequestHandler(webapp2.RequestHandler):
+
+    def __init__(self, *args, **kwargs):
+        webapp2.RequestHandler.__init__(self, *args, **kwargs)
+
+    def log(self, msg):
+        if 'debug' not in self.__dict__:
+            self.debug = str(msg)
+        else:
+            self.debug += '\n' + str(msg)
+
     def finish_render(self, template_name, **kwargs):
-        self.response.headers["Context-Type"] = "text/html"
-        template_values = {"title": ""}
+        self.response.headers['Context-Type'] = 'text/html'
+        template_values = {'debug': self.debug,
+                           'title': ''}
         user = users.get_current_user()
         if user:
             template_values.update({
-                    "nickname": user.nickname(),
-                    "email": user.email(),
-                    "logout_url": users.create_logout_url("/")
+                    'nickname': user.nickname(),
+                    'email': user.email(),
+                    'logout_url': users.create_logout_url('/')
                     })
         template_values.update(kwargs)
         template = jinja_environment.get_template(template_name)
@@ -111,87 +125,131 @@ class Login(RequestHandler):
     def get(self):
         user = users.get_current_user()
         if user:
-            self.redirect("/app")
+            self.redirect('/app')
         else:
             self.finish_render(
-                    "login.html", title="Login to Crossword Game Stats",
-                    login_url=users.create_login_url("/app"))
+                    'login.html', title='Login to Crossword Game Stats',
+                    login_url=users.create_login_url('/app'))
         
     
 class Home(RequestHandler):
-    """
-    Handler for the main page.
-    """
+    '''Handler for the main page.'''
     def get(self):
         user = users.get_current_user()
         q = GAEGame.all()
-        q.filter("uploader_id =", user.user_id())
+        q.filter('uploader_id =', user.user_id())
+        q.filter('trashed = ', False)
         games = q.run(batch_size=1000)
-        self.finish_render("index.html", title="Home", games=games)
+        self.finish_render('index.html', title='Home', games=games,
+                           trash_or_delete='Move to Trash')
 
         
 class ShowGame(RequestHandler):
-    """
+    '''
     Handler to show progress of a game.
-    """
+    '''
     def get(self):
-        key = self.request.get("key")
+        key = self.request.get('key')
         gae_game = db.get(key)
         if gae_game is None:
-            self.redirect("/app")
+            self.redirect('/app')
         else:
             g = gae_game.get_game()
             boards = g.get_boards()
             if boards:
                 final_board = boards[-1]
-                self.finish_render("game.html", title="Show game", board=game.get_html_table_board(final_board))
+                self.finish_render('game.html', title='Show game', board=game.get_html_table_board(final_board))
             else:
-                self.finish_render("game_json.html", title="Show game", game_json=g.json)
+                self.finish_render('game_json.html', title='Show game', game_json=g.json)
 
 
-class ImportGame(RequestHandler):
+class Import(RequestHandler):
     def get(self):
-        self.finish_render("import.html", title="Import game")
+        self.finish_render('import.html', title='Import game')
                 
     def post(self):
         # Check the user has credentials to add a game:
         user = users.get_current_user()
         
-        format = self.request.get("format")
-        text = self.request.get("text")
+        format = self.request.get('format')
+        text = self.request.get('text')
         
-        g = game.Game(**{format + "txt": text})
+        g = game.Game(**{format + 'txt': text})
             
         # Add to datastore
         gae_game = GAEGame(uploader_id=user.user_id())
         gae_game.set_game(g)
         gae_game.put()
         
-        self.redirect("/app")
+        self.redirect('/app')
+
+class Trash(RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        q = GAEGame.all()
+        self.log('user_id=%s' % user.user_id())
+        q.filter('uploader_id =', user.user_id())
+        q.filter('trashed =', True)
+        games = q.run(batch_size=1000)
+        self.finish_render('trash.html', title='Home')
+
+        
+class MoveToTrash(RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        key = self.request.get('key')
+        gae_game = db.get(key)
+        gae_game.trashed = True
+        gae_game.put()
+        self.redirect('/app')
+ 
+ 
+class Delete(RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        key = self.request.get('key')
+        gae_game = db.get(key)
+        db.delete(key)
+        self.redirect('/app')
+
+
+class Restore(RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        key = self.request.get('key')
+        gae_game = db.get(key)
+        gae_game.trashed = False
+        gae_game.put()
+        self.redirect('/app/trash')
 
 
 class RefreshAllGames(RequestHandler):
     def get(self):
         user = users.get_current_user()
         q = GAEGame.all()
-        q.filter("uploader_id =", user.user_id())
+        q.filter('uploader_id =', user.user_id())
         games = q.run(batch_size=1000)
         for gae_game in games:
             g = gae_game.get_game()
-            key = gae_game.key()
             gae_game.delete()
-            gae_game_new = GAEGame(key_name=str(key), uploader_id=user.user_id())
+            
+            gae_game_new = GAEGame(uploader_id=user.user_id())
             gae_game_new.set_game(g)
             gae_game_new.put()
-        self.redirect("/")
+            
+        self.redirect('/')
         
         
 app = webapp2.WSGIApplication(
-        [("/", Login),
-         ("/app", Home),
-         ("/app/game", ShowGame),
-         ("/app/import", ImportGame),
-         ("/app/refresh", RefreshAllGames)
+        [('/', Login),
+         ('/app', Home),
+         ('/app/game', ShowGame),
+         ('/app/import', Import),
+         ('/app/trash', Trash),
+         ('/app/movetotrash', MoveToTrash),
+         ('/app/delete', Delete),
+         ('/app/restore', Restore),
+         ('/app/refresh', RefreshAllGames)
          ], debug=True)
         
         
