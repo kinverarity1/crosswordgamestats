@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form name='import' action='/app/settings' method='post' class='form settings'>
+        <ul>
+            <li>Username: <input type='text' name='username' value='{{ nickname }}' autofocus /></li>
+            <li>Email: <input type='text' name='email' value='{{ email }}' /></li>
+        </ul>
+        <input type='submit' class='zocial primary' value='Save changes' />
+    </form>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block head %}
+<script type='text/javascript' charset='utf-8'>
+    $(document).ready(function() {
+        $('#data').dataTable({
+            'bStateSave': true,
+            'bPaginate': false
+        });
+    });
+</script>
+{% endblock %}
+{% block content %}
+<div id='container'>
+    <table class='display nosort' id='data' cellspacing=0>
+        <thead>
+            <tr>
+                <th>Move no.</th>
+                <th>Player</th>
+                <th>Move score</th>
+                <th>Word</th>
+                <th>Bonuses</th>
+                <th>Total score</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for move in moves %}
+            <tr>
+                <td>{{ move.move_number }}</td>
+                <td>{{ move.player }}</td>
+                <td>{{ move.score }}</td>
+                <td>{{ move.word }}</td>
+                <td>{{ move._t_bonuses}}</td>
+                <td>{{ move.total_score }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

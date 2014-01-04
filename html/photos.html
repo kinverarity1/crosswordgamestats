@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block head %}
+{% endblock %}
+{% block content %}
+<div>
+    {% for photo in photos %}
+        <div class='board-thumbnail'>
+            <ul>
+                <li>
+
+                    <a href='{{ photo.full_url }}'>
+                        <img src='{{ photo.thumb_url }}' />
+                    </a>
+                </li>
+                <li>
+                    <a class='zocial primary' href='{{ photo.linked_game_url }}'>
+                        Moo! {{ photo.linked_game_text }}
+                    </a>
+                    <a class='zocial navbar' href='{{ photo.make_orphan_url }}'>Un-link</a>
+                </li>
+                <li>
+                    Link to game: <input value='2012-??' />
+                </li>
+                <li><a class='zocial navbar' href='{{ photo.delete_url }}'>Delete photo</a></li>
+            </ul>
+        </div>
+    {% endfor %}
+{% endblock %}

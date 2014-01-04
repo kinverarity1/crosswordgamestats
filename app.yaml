@@ -1,15 +1,18 @@
 application: crosswordgamestats
-version: 1
+version: 2
 runtime: python27
 api_version: 1
 threadsafe: true
 
 handlers:
 - url: /js
-  static_dir: static
+  static_dir: js
   
-- url: /static
-  static_dir: static
+- url: /css
+  static_dir: css
+
+- url: /fonts
+  static_dir: fonts
   
 - url: /app*
   script: handlers.app

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block head %}
+<script type='text/javascript' charset='utf-8'>
+    $(document).ready(function() {
+        $('#data').dataTable({
+            'bStateSave': true
+        });
+    });
+</script>
+{% endblock %}
+{% block content %}
+<div id='container'>
+    <table class='display' id='data'>
+        <thead>
+            <tr>
+                <th>Date played</th>
+                <th>Players and scores</th>
+                <th>Margin</th>
+                <th>Winner</th>
+                <th>Total</th>
+                <th>Date modified</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for game in games %}
+            <tr>
+                <td><a href='/app/game?key={{ game._t_key }}'>{{ game._t_date_played }}</a></td>
+                <td><a href='/app/game?key={{ game._t_key }}'>{{ game._t_score_summary }}</a></td>
+                <td>{{ game.margin }}</td>
+                <td>{{ game.winning_player }}</td>
+                <td>{{ game.total_score }}</td>
+                <td><a href='/app/game?key={{ game._t_key }}'>{{ game._t_date_modified }}</a></td>
+                <td><a href='/app/delete?key={{ game._t_key }}'>Delete permanently</a></td>
+                <td><a href='/app/restore?key={{ game._t_key }}'>Restore</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Date played</th>
+                <th>Players and scores</th>
+                <th>Margin</th>
+                <th>Winner</th>
+                <th>Total</th>
+                <th>Date modified</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+{% endblock %}

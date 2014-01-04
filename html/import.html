@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block head %}
+<script type='text/javascript' charset='utf-8'>
+    $(document).ready(function() {
+        $('#data').dataTable({
+            "bStateSave": true
+        });
+        $( "#tabs" ).tabs();
+    });
+</script>
+{% endblock %}
+{% block content %}
+<div id='import-box'>
+    <form name='import' action='/app/import' method='post'>
+        <p>
+            <select name='format'>
+                <option value='GCG' selected='selected'>GCG</option>
+                <option value='custom'>Custom</option>
+                <option value='single_game_JSON'>Single game JSON</option>
+                <option value='export_JSON'>Export JSON</option>
+            </select>
+            <input type='submit' class='zocial primary' value='Import' />
+        </p>
+        <p>
+            <textarea rows='16' cols='50' name='text'></textarea>
+        </p>
+        <!-- <p><input type='submit' class='zocial primary' value='Import' /></p> -->
+    </form>
+</div>
+<div id='tabs'>
+    <h2>File format specifications</h2>
+    <ul>
+        <li><a href="#tabs-1">GCG</a></li>
+        <li><a href="#tabs-2">Custom</a></li>
+        <li><a href="#tabs-3">Single game JSON</a></li>
+        <li><a href='#tabs-4'>Export JSON</a></li>
+    </ul>
+    <div id='tabs-1'>
+        <p>The GCG file format is <a href='http://boardgames.stackexchange.com/a/7360'>widely used</a> for competitive and computer  Scrabble, and is capable of recording scores, words, tiles, and the position of played words (in other words, everything). It is documented <a href='http://www.poslfit.com/scrabble/gcg/'>here</a>. The parser here does not cope with some of the more advanced features like #tile pragma.</p>
+    </div>
+    <div id='tabs-2'>
+        <p>This is a custom format which records scores, but not words or tiles.</p>
+
+        <p>TODO: explain it, and give an example.</p>
+    </div>
+    <div id='tabs-3'>
+        <p>The single game <a href='http://en.wikipedia.org/wiki/JSON'>JSON</a> format is the format used to store games internally. It is best not constructed by hand.</p>
+    </div>
+    <div id='tabs-4'>
+        <p>The export <a href='http://en.wikipedia.org/wiki/JSON'>JSON</a> format is used to import more than one game at once.</p>
+
+        <p>It should be a list of dictionaries containing two key-value pairs, as follows:</p>
+
+        <pre>
+[{"type": "GCG", 
+  "data": "text of gcg file\nshould go here\n\n"},
+ {"type": "custom",
+  "data": "played 2012-01-01\nplayer1:: 5 12 17...\nplayer2*:: 10 19 27\n\n"},
+ {"type": "single_game_JSON",
+  "data": "JSON string goes here..."},
+  ...]</pre>
+
+        <p>Obviously, strings in the <code>single_game_JSON</code> format need to be escaped.</p>
+    </div>
+</div>
+<div id='previous-imports'>
+    <h2>Previous imports:</h2>
+    <table class='display' id='imports' cellspacing=0>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>No. games</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ib in import_batches %}
+            <tr>
+                <td><a href='/app/import?import_batch={{ ib.dt }}'>{{ ib.dt }}</a></td>
+                <td>{{ ib.count }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

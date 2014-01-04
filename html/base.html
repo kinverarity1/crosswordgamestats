@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>{{ title }} - Crossword Game Stats</title>
+        <link rel='stylesheet' media='all' type='text/css' href='/css/base.css' />
+        <link rel='stylesheet' media='all' type='text/css' href='/css/base-datatables.css' />
+        <link rel='stylesheet' media='all' type='text/css' href='/css/base-zocial.css' />
+        <!-- <link rel='stylesheet' media='handheld, only screen and (max-device-width: 320px)' type='text/css' href='/css/mobile.css' /> -->
+        <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
+        <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js'></script>
+        <script type='text/javascript' src='//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js'></script>
+        <script type='text/javascript' src='/js/base.js'></script>
+        {% block head %}
+        {% endblock %}
+    </head>
+    <body>
+        {% block user_box %}
+        <p>
+            <a title='{{ email }}' href='/app' class='zocial home' >{{ nickname }}</a>
+            <a href='/app/settings' class='zocial signout'>Settings</a>
+            <a href='{{ logout_url }}' class='zocial signout'>Sign out</a>
+        </p>
+        {% endblock %}
+        {% block navbar %}
+        <p>
+            <a class='zocial navbar' href='/app'>List of games</a>
+            <a class='zocial navbar' href='/app/import'>Import game</a>
+            <a class='zocial navbar' href='/app/photos'>Board photos</a>
+            <a class='zocial navbar' href='/app/photos/add'>Add photo</a>
+            <a class='zocial navbar' href='/app/trash'>Show Trash</a>
+        </p>
+        {% endblock %}
+        <h1>{{ title }}</h1>
+        <pre>{{ debug }}</pre>
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>
