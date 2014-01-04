@@ -1,8 +1,8 @@
 crosswordgamestats
 ==================
 
-keep track of your performance in crossword games like SCRABBLE (TM).
+Keep track of your performance in crossword games like SCRABBLE (TM). It's unfinished but the main idea is to record at a minimum your game score and see how it changes over time. It'll also be possible to view changes in your move scores and words played. Perhaps one day also an ability to replay games and enter them in as you play through a web interface, although http://cross-tables.com already does this for you.
 
-This is a Google App Engine project which is live at https://crosswordgamestats.appspot.com, although it's in a very alpha state right now.
+This is a Google App Engine project which is live at https://crosswordgamestats.appspot.com and free for anyone to use, although be aware it's alpha, very alpha.
 
-The idea is to enter records of each Crossword Game you play and then you can keep track of your performance over time. It's not finished, but the framework is complete.
+Contact: kinverarity1@gmail.com
